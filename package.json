@@ -1,0 +1,29 @@
+{
+  "name": "psychic-eureka",
+  "version": "1.0.0",
+  "description": "A simple backend server implementation Edit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hijiangtao/psychic-eureka.git"
+  },
+  "author": "Joe Jiang",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/hijiangtao/psychic-eureka/issues"
+  },
+  "homepage": "https://github.com/hijiangtao/psychic-eureka#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "koa": "^2.4.1",
+    "koa-router": "^7.2.1"
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "mysql": "^2.15.0"
+  }
+}
