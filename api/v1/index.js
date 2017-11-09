@@ -1,6 +1,12 @@
 import {
-    test as demo
+    connectMySQL
 } from '../../util/base';
+import {
+    queryGraph
+} from '../../util/agg-utils';
+import {
+    mysqlParams
+} from '../../conf/db';
 
 const test = (ctx, next) => {
     ctx.body = {
@@ -8,11 +14,18 @@ const test = (ctx, next) => {
     };
 }
 
-const user = (ctx, next) => {
-    ctx.body = demo();
+const basicGraph = async(ctx, next) => {
+    // console.log('-----request------\n', ctx.request);
+    // console.log('----- query ------\n', ctx.query);
+    // console.log('-----querystr------\n', ctx.querystring);
+
+    let queryParams = ctx.query,
+        pool = connectMySQL(mysqlParams);
+
+    ctx.body = await queryGraph(pool, queryParams);
 }
 
 export {
     test,
-    user
+    basicGraph
 }

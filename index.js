@@ -1,4 +1,4 @@
-require('babel-register');
+require('babel-core/register');
 
 const Koa = require('koa');
 const router = require('./router.js');

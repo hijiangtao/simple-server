@@ -18,10 +18,13 @@
   "homepage": "https://github.com/hijiangtao/psychic-eureka#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "koa": "^2.4.1",
     "koa-router": "^7.2.1"
   },
   "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
     "mysql": "^2.15.0"

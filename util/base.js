@@ -18,11 +18,6 @@ const connectMySQL = (props) => {
     });
 }
 
-const test = () => {
-    return 'test!';
-}
-
 export {
-    test,
     connectMySQL
 };
