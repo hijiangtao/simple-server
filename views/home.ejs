@@ -15,11 +15,16 @@
             height: 200px;
             overflow: hidden;
         }
+
+        input[name="querytext"] {
+            width: 1200px;
+        }
     </style>
 </head>
 
 <body>
     <div id="bgr-container">
+        <h1>Demo Page</h1>
         <p>Basic Graph Request</p>
         <label for="bg-bdate">Begin Date</label>
         <input type="date" name="bg-bdate" v-model="bdate">
@@ -27,8 +32,10 @@
         <label for="bg-edate">End Date</label>
         <input type="date" name="bg-edate" v-model="edate">
         <input type="time" name="bg-etime" v-model="etime">
-        <br>
         <button v-on:click="req">Submit</button>
+        <br>
+        <label for="querytext">Query Text</label>
+        <input type="text" name="querytext" v-model="qtext">
         <hr>
         <p class="limit500">{{ res }}</p>
     </div>
@@ -42,7 +49,8 @@
                 edate: '2016-07-05',
                 btime: '00:00:00',
                 etime: '02:00:00',
-                res: 'No result'
+                res: 'No result',
+                qtext: 'null'
             },
             methods: {
                 req: function () {
@@ -53,6 +61,7 @@
                         );
                     $.get(query, (res) => {
                         self.res = res;
+                        self.qtext = `http://localhost:3000/${query}`;
                     })
                 }
             }
