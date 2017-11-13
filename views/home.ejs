@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demo</title>
+    <script src="https://cdn.bootcss.com/vue/2.4.4/vue.min.js"></script>
+    <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+
+    <style>
+        p.limit500 {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="bgr-container">
+        <p>Basic Graph Request</p>
+        <label for="bg-bdate">Begin Date</label>
+        <input type="date" name="bg-bdate" v-model="bdate">
+        <input type="time" name="bg-btime" v-model="btime">
+        <label for="bg-edate">End Date</label>
+        <input type="date" name="bg-edate" v-model="edate">
+        <input type="time" name="bg-etime" v-model="etime">
+        <br>
+        <button v-on:click="req">Submit</button>
+        <hr>
+        <p class="limit500">{{ res }}</p>
+    </div>
+
+
+    <script>
+        let ins = new Vue({
+            el: '#bgr-container',
+            data: {
+                bdate: '2016-07-05',
+                edate: '2016-07-05',
+                btime: '00:00:00',
+                etime: '02:00:00',
+                res: 'No result'
+            },
+            methods: {
+                req: function () {
+                    let self = this,
+                        query =
+                        encodeURI(
+                            `/basicGraph?spaceType=grid&timeType=duration&netType=basic&other=none&beginTime=${this.bdate} ${this.btime}&endTime=${this.edate} ${this.etime}`
+                        );
+                    $.get(query, (res) => {
+                        self.res = res;
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
