@@ -2,7 +2,8 @@ import {
     connectMySQL
 } from '../../util/base';
 import {
-    queryGraph
+    queryGraph,
+    test as queryTest
 } from '../../util/agg-utils';
 import {
     mysqlParams

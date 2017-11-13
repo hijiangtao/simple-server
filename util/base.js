@@ -18,6 +18,19 @@ const connectMySQL = (props) => {
     });
 }
 
+const createConn = async(pool) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            }
+
+            resolve(connection);
+        })
+    });
+}
+
 export {
-    connectMySQL
+    connectMySQL,
+    createConn
 };
