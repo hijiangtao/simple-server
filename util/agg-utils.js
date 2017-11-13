@@ -3,71 +3,35 @@ import {
     createConn
 } from '../util/base';
 
-const test = async(pool, queryparams) => {
+/**
+ * 测试服务
+ * @param {*} pool 
+ * @param {*} queryparams 
+ */
+const test = async(pool) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
-            let {
-                spaceType,
-                timeType,
-                netType
-            } = queryparams,
-            queryInput = [];
-
-            if (timeType === 'duration') {
-                let {
-                    beginTime,
-                    endTime
-                } = queryparams;
-                queryInput.push(beginTime, endTime);
-            }
             // Use the connection
             connection.query($sql.test, (error, results) => {
                 connection.release();
 
-                // Handle error after the release.
                 if (error) {
                     reject(error);
                 }
 
-                // console.log(results);
                 resolve(results);
             });
         });
     });
 }
 
+/**
+ * 基本图查询服务
+ * @param {*} pool 
+ * @param {*} queryparams 
+ */
 const queryGraph = async(pool, queryparams) => {
-    // return new Promise((resolve, reject) => {
-    //     pool.getConnection((err, connection) => {
-    //         let {
-    //             spaceType,
-    //             timeType,
-    //             netType
-    //         } = queryparams,
-    //         queryInput = [];
-
-    //         if (timeType === 'duration') {
-    //             let {
-    //                 beginTime,
-    //                 endTime
-    //             } = queryparams;
-    //             queryInput.push(beginTime, endTime);
-    //         }
-    //         // Use the connection
-    //         connection.query($sql.test, (error, results) => {
-    //             connection.release();
-
-    //             // Handle error after the release.
-    //             if (error) {
-    //                 reject(error);
-    //             }
-
-    //             // console.log(results);
-    //             resolve(results);
-    //         });
-    //     });
-    // });
-
+    //  数据库查询入参处理
     const {
         spaceType,
         timeType,
@@ -85,6 +49,7 @@ const queryGraph = async(pool, queryparams) => {
         queryInput.push(beginTime, endTime);
     }
 
+    // 结果
     let connection = await createConn(pool),
         rawNodes = await queryElements(connection, 'nodes', queryInput),
         rawEdges = await queryElements(connection, 'edges', queryInput);
@@ -100,6 +65,12 @@ const queryGraph = async(pool, queryparams) => {
     }
 }
 
+/**
+ * 具体数据库单次查询异步函数
+ * @param {*} conn 
+ * @param {*} type 
+ * @param {*} params 
+ */
 const queryElements = async(conn, type, params) => {
     return new Promise((resolve, reject) => {
         let query = $sql[`q${type}`];
@@ -113,20 +84,26 @@ const queryElements = async(conn, type, params) => {
     })
 }
 
-// const resToGraph = (rawNodes, rawEdges, type = 'default') => {
-//     let nkeys = new Map(),
-//         ekeys = new Map(),
-//         nodes = [],
-//         edges = [];
+/**
+ * 数据库查询结果转换计算函数
+ * @param {*} rawNodes 
+ * @param {*} rawEdges 
+ * @param {*} type 
+ */
+const resToGraph = (rawNodes, rawEdges, type = 'default') => {
+    let nkeys = new Map(),
+        ekeys = new Map(),
+        nodes = [],
+        edges = [];
 
-//     rawNodes.forEach((e) => {
+    rawNodes.forEach((e) => {
 
-//     });
+    });
 
-//     rawEdges.forEach((e) => {
+    rawEdges.forEach((e) => {
 
-//     });
-// }
+    });
+}
 
 export {
     test,

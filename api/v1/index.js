@@ -9,12 +9,15 @@ import {
     mysqlParams
 } from '../../conf/db';
 
-const test = (ctx, next) => {
-    ctx.body = {
-        name: 'test'
-    };
+const testGraph = async(ctx, next) => {
+    ctx.body = await queryTest(pool);
 }
 
+/**
+ * 基本图查询后台 API 实现
+ * @param {*} ctx 
+ * @param {*} next 
+ */
 const basicGraph = async(ctx, next) => {
     // console.log('-----request------\n', ctx.request);
     // console.log('----- query ------\n', ctx.query);
@@ -27,6 +30,6 @@ const basicGraph = async(ctx, next) => {
 }
 
 export {
-    test,
+    testGraph,
     basicGraph
 }

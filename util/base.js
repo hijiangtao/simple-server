@@ -1,5 +1,9 @@
 let mysql = require('mysql');
 
+/**
+ * MySQL pool 建立函数
+ * @param {*} props 
+ */
 const connectMySQL = (props) => {
     const {
         connectionLimit,
@@ -18,6 +22,10 @@ const connectMySQL = (props) => {
     });
 }
 
+/**
+ * connection 建立函数
+ * @param {*} pool 
+ */
 const createConn = async(pool) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
