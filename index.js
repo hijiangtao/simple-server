@@ -1,5 +1,5 @@
 require('babel-core/register')({
-    ignore: true
+    ignore: false
 });
 
 const Koa = require('koa');
