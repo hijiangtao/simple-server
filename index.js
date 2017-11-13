@@ -1,4 +1,6 @@
-require('babel-core/register');
+require('babel-core/register')({
+    ignore: true
+});
 
 const Koa = require('koa');
 const logger = require('koa-logger');
