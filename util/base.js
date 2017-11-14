@@ -38,7 +38,22 @@ const createConn = async(pool) => {
     });
 }
 
+/**
+ * 判断 data 是否需要转换为 JSONP 格式
+ * @param {*} data 
+ * @param {*} params 
+ */
+const jsonpTransfer = (data, params) => {
+    const callback = params.callback;
+    if (callback) {
+        return `${callback}(${JSON.stringify(data)})`;
+    } else {
+        return data;
+    }
+}
+
 export {
     connectMySQL,
-    createConn
+    createConn,
+    jsonpTransfer
 };

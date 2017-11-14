@@ -1,5 +1,6 @@
 import {
-    connectMySQL
+    connectMySQL,
+    jsonpTransfer
 } from '../../util/base';
 import {
     queryGraph,
@@ -24,7 +25,7 @@ const basicGraph = async(ctx, next) => {
         cbFunc = queryParams.callback;
 
     const res = await queryGraph(pool, queryParams);
-    ctx.body = cbFunc ? `${cbFunc}(${JSON.stringify(res)})` : res;
+    ctx.body = jsonpTransfer(res, queryParams);
 }
 
 export {
