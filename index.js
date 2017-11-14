@@ -1,11 +1,14 @@
-require('babel-core/register');
+require('babel-core/register'); // 改写 require 钩子函数
+require('babel-polyfill'); // 针对一些 ES6+ 新增 API 进行 polyfill
 
 const Koa = require('koa');
 const logger = require('koa-logger');
 const views = require('koa-views');
+const serve = require('koa-static');
 const path = require('path');
 
-const router = require('./router.js');
+const rootRouter = require('./router/root.js');
+const userRouter = require('./router/user.js');
 
 const app = module.exports = new Koa();
 
@@ -15,12 +18,12 @@ app.use(views(path.join(__dirname, '/views'), {
     extension: 'ejs'
 }));
 
-// app.use(async(ctx) => {
-//     await ctx.render('home', {});
-// });
+app.use(serve(path.join(__dirname, '/public')));
 
 app
-    .use(router.routes())
-    .use(router.allowedMethods());
+    .use(rootRouter.routes())
+    .use(rootRouter.allowedMethods())
+    .use(userRouter.routes())
+    .use(userRouter.allowedMethods());
 
 if (!module.parent) app.listen(3000);

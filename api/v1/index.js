@@ -19,14 +19,12 @@ const testGraph = async(ctx, next) => {
  * @param {*} next 
  */
 const basicGraph = async(ctx, next) => {
-    // console.log('-----request------\n', ctx.request);
-    // console.log('----- query ------\n', ctx.query);
-    // console.log('-----querystr------\n', ctx.querystring);
-
     let queryParams = ctx.query,
-        pool = connectMySQL(mysqlParams);
+        pool = connectMySQL(mysqlParams),
+        cbFunc = queryParams.callback;
 
-    ctx.body = await queryGraph(pool, queryParams);
+    const res = await queryGraph(pool, queryParams);
+    ctx.body = cbFunc ? `${cbFunc}(${JSON.stringify(res)})` : res;
 }
 
 export {

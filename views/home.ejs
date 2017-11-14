@@ -11,9 +11,11 @@
 
     <style>
         p.limit500 {
-            width: 100%;
+            /* width: 100%; */
             height: 200px;
             overflow: hidden;
+            padding: 1rem;
+            border: 1px solid black;
         }
 
         input[name="querytext"] {
@@ -26,10 +28,10 @@
     <div id="bgr-container">
         <h1>Demo Page</h1>
         <p>Basic Graph Request</p>
-        <label for="bg-bdate">Begin Date</label>
+        <label for="bg-bdate">Begin Time</label>
         <input type="date" name="bg-bdate" v-model="bdate">
         <input type="time" name="bg-btime" v-model="btime">
-        <label for="bg-edate">End Date</label>
+        <label for="bg-edate">End Time</label>
         <input type="date" name="bg-edate" v-model="edate">
         <input type="time" name="bg-etime" v-model="etime">
         <button v-on:click="req">Submit</button>
@@ -50,18 +52,18 @@
                 btime: '00:00:00',
                 etime: '02:00:00',
                 res: 'No result',
-                qtext: 'null'
+                qtext: 'Please submit your selection.'
             },
             methods: {
                 req: function () {
                     let self = this,
                         query =
                         encodeURI(
-                            `/basicGraph?spaceType=grid&timeType=duration&netType=basic&other=none&beginTime=${this.bdate} ${this.btime}&endTime=${this.edate} ${this.etime}`
+                            `/api/basicGraph?spaceType=grid&timeType=duration&netType=basic&other=none&beginTime=${this.bdate} ${this.btime}&endTime=${this.edate} ${this.etime}`
                         );
                     $.get(query, (res) => {
                         self.res = res;
-                        self.qtext = `http://localhost:3000/${query}`;
+                        self.qtext = `http://localhost:3000${query}`;
                     })
                 }
             }
