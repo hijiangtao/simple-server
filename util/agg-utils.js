@@ -54,7 +54,7 @@ const queryGraph = async(pool, queryparams) => {
         rawNodes = await queryElements(connection, 'nodes', queryInput),
         rawEdges = await queryElements(connection, 'edges', queryInput);
 
-    // return resToGraph(rawNodes, rawEdges);
+    pool.close()
     return {
         "nodes": rawNodes,
         "edges": rawEdges,
@@ -79,6 +79,7 @@ const queryElements = async(conn, type, params) => {
                 reject(err);
             }
 
+            conn.release();
             resolve(res);
         });
     })
