@@ -10,6 +10,8 @@ import {
     mysqlParams
 } from '../../conf/db';
 
+const pool = connectMySQL(mysqlParams);
+
 const testGraph = async(ctx, next) => {
     ctx.body = await queryTest(pool);
 }
@@ -21,11 +23,11 @@ const testGraph = async(ctx, next) => {
  */
 const basicGraph = async(ctx, next) => {
     let queryParams = ctx.query,
-        pool = connectMySQL(mysqlParams),
         cbFunc = queryParams.callback;
 
     const res = await queryGraph(pool, queryParams);
-    ctx.body = jsonpTransfer(res, queryParams);
+    // pool.end();
+    return ctx.body = jsonpTransfer(res, queryParams);
 }
 
 export {
