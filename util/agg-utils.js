@@ -40,6 +40,17 @@ const queryGraph = async(pool, queryparams) => {
     let tmp;
     let queryInput = [];
 
+    let nodesSqlType = 'qgnodes',
+        edgesSqlType = 'qggedges';
+    switch (spaceType) {
+        case 'div':
+            nodesSqlType = 'qanodes';
+            edgesSqlType = 'qaaedges';
+            break;
+        default:
+            break;
+    }
+
     if (timeType === 'duration') {
         const {
             beginTime,
@@ -51,8 +62,8 @@ const queryGraph = async(pool, queryparams) => {
 
     // 结果
     let connection = await createConn(pool),
-        rawNodes = await queryElements(connection, 'nodes', queryInput),
-        rawEdges = await queryElements(connection, 'edges', queryInput);
+        rawNodes = await queryElements(connection, nodesSqlType, queryInput),
+        rawEdges = await queryElements(connection, edgesSqlType, queryInput);
 
     connection.release();
     return {
@@ -73,7 +84,7 @@ const queryGraph = async(pool, queryparams) => {
  */
 const queryElements = async(conn, type, params) => {
     return new Promise((resolve, reject) => {
-        let query = $sql[`q${type}`];
+        let query = $sql[type];
         conn.query(query, params, (err, res) => {
             if (err) {
                 reject(err);

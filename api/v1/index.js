@@ -26,7 +26,6 @@ const basicGraph = async(ctx, next) => {
         cbFunc = queryParams.callback;
 
     const res = await queryGraph(pool, queryParams);
-    // pool.end();
     return ctx.body = jsonpTransfer(res, queryParams);
 }
 
