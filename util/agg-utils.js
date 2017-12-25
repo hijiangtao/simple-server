@@ -25,6 +25,30 @@ const test = async(pool) => {
     });
 }
 
+const SQLParams = {
+    ver: ['v1', 'v2'],
+    nTableName: {
+        'a': {
+            'v1': 'anode',
+            'v2': 'anodev2'
+        },
+        'g': {
+            'v1': 'nodes',
+            'v2': 'nodes'
+        }
+    },
+    eTableName: {
+        'aa': {
+            'v1': 'aaedge',
+            'v2': 'aaedgev2'
+        },
+        'gg': {
+            'v1': 'edges',
+            'v2': 'edges'
+        }
+    }
+}
+
 /**
  * 基本图查询服务
  * @param {*} pool 
@@ -35,21 +59,27 @@ const queryGraph = async(pool, queryparams) => {
     const {
         spaceType,
         timeType,
-        netType
+        netType,
+        v
     } = queryparams;
     let tmp;
-    let queryInput = [];
+    let qNodeInput = [],
+        qEdgeInput = [];
+    let ver = SQLParams['ver'].indexOf(v) !== -1 ? v : 'v1';
 
-    let nodesSqlType = 'qgnodes',
-        edgesSqlType = 'qggedges';
+    let nodesSqlType = 'g',
+        edgesSqlType = 'gg';
     switch (spaceType) {
         case 'div':
-            nodesSqlType = 'qanodes';
-            edgesSqlType = 'qaaedges';
+            nodesSqlType = 'a';
+            edgesSqlType = 'aa';
             break;
         default:
             break;
     }
+
+    qNodeInput.push(SQLParams['nTableName'][nodesSqlType][ver]);
+    qEdgeInput.push(SQLParams['eTableName'][edgesSqlType][ver]);
 
     if (timeType === 'duration') {
         const {
@@ -57,13 +87,14 @@ const queryGraph = async(pool, queryparams) => {
             endTime
         } = queryparams;
         tmp = beginTime;
-        queryInput.push(beginTime, endTime);
+        qNodeInput.push(beginTime, endTime);
+        qEdgeInput.push(beginTime, endTime);
     }
 
     // 结果
     let connection = await createConn(pool),
-        rawNodes = await queryElements(connection, nodesSqlType, queryInput),
-        rawEdges = await queryElements(connection, edgesSqlType, queryInput);
+        rawNodes = await queryElements(connection, `q${nodesSqlType}nodes`, qNodeInput),
+        rawEdges = await queryElements(connection, `q${edgesSqlType}edges`, qEdgeInput);
 
     connection.release();
     return {
