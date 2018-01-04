@@ -26,7 +26,7 @@ const connectMySQL = (props) => {
  * connection 建立函数
  * @param {*} pool 
  */
-const createConn = async(pool) => {
+const connMySQL = async(pool) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
             if (err) {
@@ -36,6 +36,23 @@ const createConn = async(pool) => {
             resolve(connection);
         })
     });
+}
+
+const connMongo = async(MongoClient, url, dbname) => {
+    return new Promise((resolve, reject) => {
+        MongoClient.connect(url, (err, client) => {
+            console.log("Connected successfully to server");
+            if (err) {
+                reject(err);
+            }
+
+            const db = client.db(dbname);
+            resolve({
+                db,
+                client
+            });
+        });
+    })
 }
 
 /**
@@ -54,6 +71,7 @@ const jsonpTransfer = (data, params) => {
 
 export {
     connectMySQL,
-    createConn,
+    connMySQL,
+    connMongo,
     jsonpTransfer
 };

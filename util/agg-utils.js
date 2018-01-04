@@ -1,7 +1,12 @@
 import $sql from '../conf/sql';
 import {
-    createConn
+    connMySQL,
+    connMongo
 } from '../util/base';
+import {
+    SQLParams
+} from './params';
+
 
 /**
  * 测试服务
@@ -25,36 +30,12 @@ const test = async(pool) => {
     });
 }
 
-const SQLParams = {
-    ver: ['v1', 'v2'],
-    nTableName: {
-        'a': {
-            'v1': 'anode',
-            'v2': 'anodev2'
-        },
-        'g': {
-            'v1': 'nodes',
-            'v2': 'nodes'
-        }
-    },
-    eTableName: {
-        'aa': {
-            'v1': 'aaedge',
-            'v2': 'aaedgev2'
-        },
-        'gg': {
-            'v1': 'edges',
-            'v2': 'edges'
-        }
-    }
-}
-
 /**
  * 基本图查询服务
  * @param {*} pool 
  * @param {*} queryparams 
  */
-const queryGraph = async(pool, queryparams) => {
+const queryGraph = async(db, queryparams) => {
     //  数据库查询入参处理
     const {
         spaceType,
@@ -67,18 +48,30 @@ const queryGraph = async(pool, queryparams) => {
         qEdgeInput = [];
     let ver = SQLParams['ver'].indexOf(v) !== -1 ? v : 'v1';
 
-    let nodesSqlType = 'g',
+    let nodesSqlType = ['g'],
         edgesSqlType = 'gg';
     switch (spaceType) {
         case 'div':
-            nodesSqlType = 'a';
+            nodesSqlType = ['a'];
             edgesSqlType = 'aa';
+            break;
+        case 'poi':
+            nodesSqlType = ['p'];
+            edgesSqlType = 'pp';
+            break;
+        case 'div_to_poi':
+            nodesSqlType = ['a', 'p'];
+            edgesSqlType = 'ap';
+            break;
+        case 'poi_to_div':
+            nodesSqlType = ['p', 'a'];
+            edgesSqlType = 'pa';
             break;
         default:
             break;
     }
 
-    qNodeInput.push(SQLParams['nTableName'][nodesSqlType][ver]);
+    qNodeInput.push(SQLParams['nTableName'][nodesSqlType[0]][ver]);
     qEdgeInput.push(SQLParams['eTableName'][edgesSqlType][ver]);
 
     if (timeType === 'duration') {
@@ -86,34 +79,45 @@ const queryGraph = async(pool, queryparams) => {
             beginTime,
             endTime
         } = queryparams;
-        tmp = beginTime;
+        tmp = [beginTime, endTime];
         qNodeInput.push(beginTime, endTime);
         qEdgeInput.push(beginTime, endTime);
     }
 
     // 结果
-    let connection = await createConn(pool),
-        rawNodes = await queryElements(connection, `q${nodesSqlType}nodes`, qNodeInput),
-        rawEdges = await queryElements(connection, `q${edgesSqlType}edges`, qEdgeInput);
+    let connection = await connMySQL(db.mysqlPool),
+        qEles = [await queryMySQLElements(connection, `q${nodesSqlType[0]}nodes`, qNodeInput), await queryMySQLElements(connection, `qedges`, qEdgeInput)];
+
+    let [rawNodes, rawEdges] = qEles;
+    let qSecondNodes = nodesSqlType.length === 1 ? false : true;
+    qNodeInput[0] = qSecondNodes ? SQLParams['nTableName'][nodesSqlType[1]][ver] : qNodeInput[0];
+    let secNodes = qSecondNodes ? await queryMySQLElements(connection, `q${nodesSqlType[1]}nodes`, qNodeInput) : null;
 
     connection.release();
+    const nodesRes = qSecondNodes ? [rawNodes, secNodes] : [rawNodes],
+        edgesRes = [rawEdges];
     return {
-        "nodes": rawNodes,
-        "edges": rawEdges,
+        "nodes": nodesRes,
+        "edges": edgesRes,
         "props": {
             "date": tmp,
-            "period": 1
+            spaceType,
+            timeType,
+            netType,
+            nodesLen: nodesRes.length,
+            edgesLen: edgesRes.length,
+            "v": ver
         }
     }
 }
 
 /**
- * 具体数据库单次查询异步函数
+ * 具体 MySQL 数据库单次查询异步函数
  * @param {*} conn 
  * @param {*} type 
  * @param {*} params 
  */
-const queryElements = async(conn, type, params) => {
+const queryMySQLElements = async(conn, type, params) => {
     return new Promise((resolve, reject) => {
         let query = $sql[type];
         conn.query(query, params, (err, res) => {
@@ -127,24 +131,54 @@ const queryElements = async(conn, type, params) => {
 }
 
 /**
- * 数据库查询结果转换计算函数
+ * [废弃]在 mongodb 中查找 POI
+ * @param {*} db 
+ */
+const queryPOIs = async(db) => {
+    return new Promise((resolve, reject) => {
+        const collection = db.collection('pois');
+        // Find some documents
+        collection.find({}, {
+            "pid": 1,
+            "properties": 1
+        }).toArray((err, docs) => {
+            console.log("Found the following records");
+            resolve(docs);
+        })
+    })
+}
+
+/**
+ * [废弃] 跨数据库查询节点与边信息
  * @param {*} rawNodes 
  * @param {*} rawEdges 
  * @param {*} type 
  */
-const resToGraph = (rawNodes, rawEdges, type = 'default') => {
-    let nkeys = new Map(),
-        ekeys = new Map(),
-        nodes = [],
-        edges = [];
+const crossDatabseQuery = async(nodeType, edgeType, {
+    mysqlPool,
+    MongoClient,
+    mongoUrl
+}) => {
+    // 查询 MySQL 点信息
+    let connection = await connMySQL(mysqlPool),
+        rawNodes = await queryMySQLElements(connection, `q${nodesSqlType}nodes`, qNodeInput);
 
-    rawNodes.forEach((e) => {
+    // 查询 from/to 两边节点的列表，用于筛选
 
-    });
+    // 查询 POI 点信息
+    let mongo = await connMongo(MongoClient, mongoUrl, MONGO_DB_NAME);
+    let pois = await queryPOIs(mongo.db);
 
-    rawEdges.forEach((e) => {
+    mongo.client.close();
 
-    });
+    // 查询边信息
+
+    // 融合点边信息，去除无用的 POI 信息
+
+
+    return {
+
+    }
 }
 
 export {
