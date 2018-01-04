@@ -6,7 +6,8 @@ import {
 import {
     SQLParams
 } from './params';
-
+import * as div_to_poi_demo from '../conf/demo/div_to_poi_20160705002017070505';
+import * as poi_to_div_demo from '../conf/demo/poi_to_div_20160705112017070517';
 
 /**
  * 测试服务
@@ -41,8 +42,16 @@ const queryGraph = async(db, queryparams) => {
         spaceType,
         timeType,
         netType,
-        v
+        v,
+        other
     } = queryparams;
+
+    if (other === 'div_to_poi_demo') {
+        return div_to_poi_demo;
+    } else if (other === 'poi_to_div_demo') {
+        return poi_to_div_demo;
+    }
+
     let tmp;
     let qNodeInput = [],
         qEdgeInput = [];
@@ -86,7 +95,10 @@ const queryGraph = async(db, queryparams) => {
 
     // 结果
     let connection = await connMySQL(db.mysqlPool),
-        qEles = [await queryMySQLElements(connection, `q${nodesSqlType[0]}nodes`, qNodeInput), await queryMySQLElements(connection, `qedges`, qEdgeInput)];
+        qNodes = queryMySQLElements(connection, `q${nodesSqlType[0]}nodes`, qNodeInput),
+        qEdges = queryMySQLElements(connection, `qedges`, qEdgeInput);
+
+    let qEles = [await qNodes, await qEdges];
 
     let [rawNodes, rawEdges] = qEles;
     let qSecondNodes = nodesSqlType.length === 1 ? false : true;
