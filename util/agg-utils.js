@@ -6,7 +6,7 @@ import {
 import {
     SQLParams
 } from './params';
-import * as div_to_poi_demo from '../conf/demo/div_to_poi_20160705002017070505';
+import * as div_to_poi_demo from '../conf/demo/div_to_poi_20160705112017070517';
 import * as poi_to_div_demo from '../conf/demo/poi_to_div_20160705112017070517';
 
 /**
