@@ -26,4 +26,15 @@ app
     .use(userRouter.routes())
     .use(userRouter.allowedMethods());
 
+
+let Webpack = require('webpack');
+let middleware = require('koa-webpack');
+let config = require('./webpack.config.js');
+
+const compiler = Webpack(config);
+
+app.use(middleware({
+    config: config
+}))
+
 if (!module.parent) app.listen(3000);
