@@ -134,10 +134,11 @@ const queryClusterDots = async(db, queryparams) => {
     const msType = 'm12_default',
         dsType = 'd_001_10';
 
-    let qInput = [msType, dsType, dsType, -2];
+    let qInput = [msType, dsType, msType, -2, dsType, -2];
 
     if (Number.parseInt(filterNoise)) {
         qInput[3] = -1;
+        qInput[5] = -1;
     }
 
     let connection = await connMySQL(db.mysqlPool),
