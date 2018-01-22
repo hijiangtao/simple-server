@@ -6,6 +6,7 @@ import * as api from '../api/v1/index.js';
 
 router
     .get('/testGraph', api.testGraph)
-    .all('/basicGraph', api.basicGraph);
+    .all('/basicGraph', api.basicGraph)
+    .all('/clusterDots', api.clusterDots);
 
 module.exports = router;

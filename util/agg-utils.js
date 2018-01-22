@@ -123,6 +123,38 @@ const queryGraph = async(db, queryparams) => {
     }
 }
 
+
+const queryClusterDots = async(db, queryparams) => {
+    const {
+        customize,
+        filterNoise,
+        v
+    } = queryparams;
+
+    const msType = 'm12_default',
+        dsType = 'd_001_10';
+
+    let qInput = [msType, dsType, dsType, -2];
+
+    if (Number.parseInt(filterNoise)) {
+        qInput[3] = -1;
+    }
+
+    let connection = await connMySQL(db.mysqlPool),
+        qNodes = await queryMySQLElements(connection, `qClusternodes`, qInput);
+
+    connection.release();
+    console.log('qNodes length: ', qNodes.length)
+
+    return {
+        "nodes": qNodes,
+        "props": {
+            "v": v,
+            "filterNoise": Boolean(filterNoise)
+        }
+    }
+}
+
 /**
  * 具体 MySQL 数据库单次查询异步函数
  * @param {*} conn 
@@ -195,5 +227,6 @@ const crossDatabseQuery = async(nodeType, edgeType, {
 
 export {
     test,
-    queryGraph
+    queryGraph,
+    queryClusterDots
 }
