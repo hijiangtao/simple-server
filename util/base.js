@@ -1,4 +1,6 @@
-let mysql = require('mysql');
+import $sql from '../conf/sql';
+import mysql from 'mysql';
+// let mysql = require('mysql');
 
 /**
  * MySQL pool 建立函数
@@ -26,7 +28,7 @@ const connectMySQL = (props) => {
  * connection 建立函数
  * @param {*} pool 
  */
-const connMySQL = async(pool) => {
+const connMySQL = async (pool) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
             if (err) {
@@ -38,7 +40,7 @@ const connMySQL = async(pool) => {
     });
 }
 
-const connMongo = async(MongoClient, url, dbname) => {
+const connMongo = async (MongoClient, url, dbname) => {
     return new Promise((resolve, reject) => {
         MongoClient.connect(url, (err, client) => {
             console.log("Connected successfully to server");
@@ -69,9 +71,29 @@ const jsonpTransfer = (data, params) => {
     }
 }
 
+/**
+ * 具体 MySQL 数据库单次查询异步函数
+ * @param {*} conn 
+ * @param {*} type 
+ * @param {*} params 
+ */
+const queryMySQLElements = async (conn, type, params) => {
+    return new Promise((resolve, reject) => {
+        let query = $sql[type];
+        conn.query(query, params, (err, res) => {
+            if (err) {
+                reject(err);
+            }
+
+            resolve(res);
+        });
+    })
+}
+
 export {
     connectMySQL,
     connMySQL,
     connMongo,
-    jsonpTransfer
+    jsonpTransfer,
+    queryMySQLElements
 };

@@ -4,8 +4,9 @@ import {
 } from '../../util/base';
 import {
     queryGraph,
-    test as queryTest,
-    queryClusterDots
+    queryTest,
+    queryClusterDots,
+    queryTripFlow
 } from '../../util/agg-utils';
 import {
     mysqlParams
@@ -13,7 +14,7 @@ import {
 
 const mysqlPool = connectMySQL(mysqlParams);
 
-const testGraph = async(ctx, next) => {
+const testGraph = async (ctx, next) => {
     ctx.body = await queryTest(mysqlPool);
 }
 
@@ -22,7 +23,7 @@ const testGraph = async(ctx, next) => {
  * @param {*} ctx 
  * @param {*} next 
  */
-const basicGraph = async(ctx, next) => {
+const basicGraph = async (ctx, next) => {
     let queryParams = ctx.query,
         cbFunc = queryParams.callback;
 
@@ -32,7 +33,7 @@ const basicGraph = async(ctx, next) => {
     return ctx.body = jsonpTransfer(res, queryParams);
 }
 
-const clusterDots = async(ctx, next) => {
+const clusterDots = async (ctx, next) => {
     let queryParams = ctx.query,
         cbFunc = queryParams.callback;
 
@@ -42,8 +43,19 @@ const clusterDots = async(ctx, next) => {
     return ctx.body = jsonpTransfer(res, queryParams);
 }
 
+const tripFlow = async (ctx, next) => {
+    let queryParams = ctx.query,
+        cbFunc = queryParams.callback;
+
+    const res = await queryTripFlow({
+        mysqlPool
+    }, queryParams);
+    return ctx.body = jsonpTransfer(res, queryParams);
+}
+
 export {
     testGraph,
     basicGraph,
-    clusterDots
+    clusterDots,
+    tripFlow
 }
