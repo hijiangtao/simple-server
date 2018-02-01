@@ -73,13 +73,14 @@ const jsonpTransfer = (data, params) => {
 
 /**
  * 具体 MySQL 数据库单次查询异步函数
- * @param {*} conn 
- * @param {*} type 
- * @param {*} params 
+ * @param {*} conn Mysql 连接池
+ * @param {*} type SQL 语句类型
+ * @param {*} params 入参
+ * @param {*} func 默认为 false 即 type 对应语句为字符串，否则为函数，函数入参为 func 值
  */
-const queryMySQLElements = async (conn, type, params) => {
+const queryMySQLElements = async (conn, type, params, func = false) => {
     return new Promise((resolve, reject) => {
-        let query = $sql[type];
+        let query = func ? $sql[type](func) : $sql[type];
         conn.query(query, params, (err, res) => {
             if (err) {
                 reject(err);

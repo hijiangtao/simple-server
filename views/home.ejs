@@ -29,7 +29,17 @@
 <body>
     <div id="bgr-container">
         <h1>Demo Page</h1>
-        <p>Basic Graph Request</p>
+        <h3>Basic Graph Request</h3>
+        <label for="">API(div v2): http://localhost:3000/api/basicGraph?spaceType=div&timeType=duration&netType=basic&other=none&beginTime=2016-07-05%2000:00:00&endTime=2016-07-05%2002:00:00&v=v2</label>
+        <br>
+        <label for="">API(grid v2): http://localhost:3000/api/basicGraph?spaceType=grid&timeType=duration&netType=basic&other=none&beginTime=2016-07-05%2000:00:00&endTime=2016-07-05%2002:00:00&v=v2</label>
+        <br>
+        <label for="">API(poi_to_div): http://localhost:3000/api/basicGraph?spaceType=poi_to_div&timeType=duration&netType=basic&other=none&beginTime=2016-07-05+11%3A00%3A00&endTime=2016-07-05+17%3A00%3A00</label>
+        <br>
+        <label for="">API(div_to_poi): http://localhost:3000/api/basicGraph?spaceType=div_to_poi&timeType=duration&netType=basic&other=none&beginTime=2016-07-05+11%3A00%3A00&endTime=2016-07-05+17%3A00%3A00</label>
+        <br>
+        <hr>
+        <h5>Demo GET for spaceType=grid</h5>
         <label for="bg-bdate">Begin Time</label>
         <input type="date" name="bg-bdate" v-model="bdate">
         <input type="time" name="bg-btime" v-model="btime">
@@ -42,6 +52,12 @@
         <input type="text" name="querytext" v-model="qtext">
         <hr>
         <p class="limit500">{{ res }}</p>
+        <hr>
+        <h3>Cluster Dots Query</h3>
+        <label for="">API: http://YourCustomeAPI/api/clusterDots?customize=0&v=v1&filterNoise=1</label>
+        <hr>
+        <h3>Trip Flow Query</h3>
+        <label for="">API: http://YourCustomeAPI/api/tripFlow?type=speed&thread=5000&time=2016-07-05%2000:00:00&order=DESC&v=v1</label>
     </div>
 
 
