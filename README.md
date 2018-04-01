@@ -1,4 +1,4 @@
-# psychic-eureka
+# simple-server
 
 A simple Koa2 application implementation
 
