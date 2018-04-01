@@ -1,12 +1,14 @@
 import $sql from '../conf/sql';
 import mysql from 'mysql';
-// let mysql = require('mysql');
+import PythonShell from 'python-shell';
+import path from 'path';
+import fs from 'fs';
 
 /**
  * MySQL pool 建立函数
  * @param {*} props 
  */
-const connectMySQL = (props) => {
+export const connectMySQL = (props) => {
     const {
         connectionLimit,
         host,
@@ -28,7 +30,7 @@ const connectMySQL = (props) => {
  * connection 建立函数
  * @param {*} pool 
  */
-const connMySQL = async (pool) => {
+export const connMySQL = async (pool) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
             if (err) {
@@ -40,7 +42,7 @@ const connMySQL = async (pool) => {
     });
 }
 
-const connMongo = async (MongoClient, url, dbname) => {
+export const connMongo = async (MongoClient, url, dbname) => {
     return new Promise((resolve, reject) => {
         MongoClient.connect(url, (err, client) => {
             console.log("Connected successfully to server");
@@ -62,7 +64,7 @@ const connMongo = async (MongoClient, url, dbname) => {
  * @param {*} data 
  * @param {*} params 
  */
-const jsonpTransfer = (data, params) => {
+export const jsonpTransfer = (data, params) => {
     const callback = params.callback;
     if (callback) {
         return `${callback}(${JSON.stringify(data)})`;
@@ -78,7 +80,7 @@ const jsonpTransfer = (data, params) => {
  * @param {*} params 入参
  * @param {*} func 默认为 false 即 type 对应语句为字符串，否则为函数，函数入参为 func 值
  */
-const queryMySQLElements = async (conn, type, params, func = false) => {
+export const queryMySQLElements = async (conn, type, params, func = false) => {
     return new Promise((resolve, reject) => {
         let query = func ? $sql[type](func) : $sql[type];
         conn.query(query, params, (err, res) => {
@@ -91,10 +93,60 @@ const queryMySQLElements = async (conn, type, params, func = false) => {
     })
 }
 
-export {
-    connectMySQL,
-    connMySQL,
-    connMongo,
-    jsonpTransfer,
-    queryMySQLElements
-};
+/**
+ * 执行 Python 脚本并检查返回正确结果文件数据
+ * @param {*} param0 
+ */
+export const ExecutePythonFile = async ({
+    ResFileName,
+    ResFilePath,
+    PyFileName,
+    Options
+}) => {
+    return new Promise((resolve, reject) => {
+        PythonShell.run(PyFileName, Options, (error, result) => {
+            // console.log(error);
+            if (error) reject(error);
+            // results is an array consisting of messages collected during execution
+            // console.log("FileName", file);
+            let file = path.resolve(ResFilePath, ResFileName),
+                ifResExist = fs.existsSync(file);
+            if (ifResExist) {
+                const res = JSON.parse(fs.readFileSync(file));
+                resolve(res);
+            } else {
+                reject("No data of this timeSegID!");
+            }
+        });
+    })
+}
+
+export const parseFormatGID = (gid) => {
+    const LngSPLIT = 0.0064;
+    const LatSPLIT = 0.005;
+    const locs = {
+        'north': 41.0500,
+        'south': 39.4570,
+        'west': 115.4220,
+        'east': 117.5000
+    };
+
+    const id = Number.parseInt(gid),
+        LNGNUM = Number.parseInt((locs['east'] - locs['west']) / LngSPLIT + 1);
+
+    const latind = Number.parseInt(id / LNGNUM),
+        lngind = id - latind * LNGNUM;
+
+    const lat = (locs['south'] + latind * LatSPLIT),
+        lng = (locs['west'] + lngind * LngSPLIT),
+        lngcen = (lng + LngSPLIT / 2.0),
+        latcen = (lat + LatSPLIT / 2.0);
+
+    return {
+        'lat': latcen,
+        'lng': lngcen,
+        'gid': id,
+        'y': latind,
+        'x': lngind
+    }
+}

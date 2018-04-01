@@ -6,11 +6,21 @@ import {
     queryGraph,
     queryTest,
     queryClusterDots,
-    queryTripFlow
+    queryTripFlow,
+    queryTreeMap,
+    queryAngleClusterStats,
+    queryAbnormalStats
 } from '../../util/agg-utils';
 import {
     mysqlParams
 } from '../../conf/db';
+import {
+    initAngleClusterParams,
+    initTreeMapParams,
+    initAbnormalStatsParams
+} from '../../util/params';
+import path from 'path';
+import fs from 'fs';
 
 const mysqlPool = connectMySQL(mysqlParams);
 
@@ -53,9 +63,48 @@ const tripFlow = async (ctx, next) => {
     return ctx.body = jsonpTransfer(res, queryParams);
 }
 
+const treeMap = async (ctx, next) => {
+    let params = ctx.query,
+        cbFunc = params.callback;
+
+    const queryParams = initTreeMapParams(params);
+
+    let file = path.resolve(queryParams.ResFilePath, queryParams.ResFileName),
+        ifResExist = fs.existsSync(file);
+
+    // console.log("queryParams.seedStrength: ", queryParams.seedStrength)
+    // let res = ifResExist ? JSON.parse(fs.readFileSync(file)) : await queryTreeMap(queryParams);
+    let res = await queryTreeMap(queryParams);
+
+    return ctx.body = jsonpTransfer(res, params);
+}
+
+const angleClusterStats = async (ctx, next) => {
+    let params = ctx.query,
+        cbFunc = params.callback;
+
+    const queryParams = initAngleClusterParams(params);
+
+    const res = await queryAngleClusterStats(queryParams);
+    return ctx.body = jsonpTransfer(res, params);
+}
+
+const abnormalStats = async (ctx, next) => {
+    let params = ctx.query,
+        cbFunc = params.callback;
+
+    const queryParams = initAbnormalStatsParams(params);
+
+    const res = await queryAbnormalStats(queryParams);
+    return ctx.body = jsonpTransfer(res, params);
+}
+
 export {
     testGraph,
     basicGraph,
     clusterDots,
-    tripFlow
+    tripFlow,
+    treeMap,
+    angleClusterStats,
+    abnormalStats
 }

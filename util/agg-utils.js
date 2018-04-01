@@ -10,10 +10,22 @@ import {
 import {
     queryTripFlow
 } from './methods/queryTripFlow';
+import {
+    queryTreeMap
+} from './methods/queryTreeMap';
+import {
+    queryAngleClusterStats
+} from './methods/queryAngleClusterStats';
+import {
+    queryAbnormalStats
+} from './methods/queryAbnormalStats';
 
 export {
     queryTest,
     queryGraph,
     queryClusterDots,
-    queryTripFlow
+    queryTripFlow,
+    queryTreeMap,
+    queryAngleClusterStats,
+    queryAbnormalStats
 }
