@@ -1,22 +1,29 @@
 # simple-server
 
-A simple Koa2 application implementation
+A simple server implemented with Koa2, which you may not want to use it.
 
 ## Usage
 
 ```
-git clone repoUrl
+# Clone the repository
+git clone git@github.com:hijiangtao/simple-server.git
+
+# Enter into the folder
 cd repoUrl
+
+# Install and test the application
 npm install
 npm run dev
 ```
 
 ## Structure
 
-* router/root.js: 指定页面路由（具体页面放 /views 内）
-* public/*: 放静态资源（若不需要编译，前端调用使用 /[type]/[name].[suffix]）
-* webpack.config.js: devConfig 中 entry 指定需要编译的 js 资源（前端调用使用 /dist/[name].js）
+* Routes: all routes rule should be put in `router` folder, there are seperated with `root.js` and `user.js`;
+* Views: all view templates should be put in `views` folder, you need to code with routes when you want to add a new page into current application.
+* Static Assets: all the files in `public` folder are static assets, which includes `css`, `js` and `img` three types sub-folders inside. You can include it in your view templates directly with rule like `/[type]/[name].[suffix]`.
+* webpack.config.js: the webapack configuration for this application, you need to specify the JavaScript files that you want to compile in the `entry` of `devConfig`, you can include them in your view templates with rule like `/dist/[name].js`.
 
+The structure of this application shows below:
 
 ```
 ├── [4.0K]  api
@@ -38,3 +45,15 @@ npm run dev
 └── [4.0K]  views
     └── [2.2K]  home.ejs
 ```
+
+## VAST18
+
+The specific wiki for VAST18 shows [here](https://github.com/hijiangtao/simple-server/tree/VAST18) (in `VAST18` branch).
+
+## Contact
+
+Github [@hijiangtao](https://github.com/hijiangtao)
+
+## LICENSE
+
+Apache License V2.0
