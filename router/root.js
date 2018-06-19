@@ -6,9 +6,5 @@ router
         await ctx.render('home', {});
     });
 
-// router
-//     .get('/home', async(ctx) => {
-//         await ctx.render('home', {});
-//     });
 
 module.exports = router;
